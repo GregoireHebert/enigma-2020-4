@@ -11,7 +11,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
  * @ORM\Entity
  * @ApiResource
  */
-class Player implements UserInterface
+class Player implements UserInterface, PlayerInterface
 {
     /**
      * @ORM\Id
@@ -39,7 +39,7 @@ class Player implements UserInterface
     /**
      * @ORM\Column(type="float")
      */
-    private float $ratio = 1200.0;
+    private ?float $ratio = 1200.0;
 
     private function probabilityAgainst(PlayerInterface $player): float
     {
@@ -51,7 +51,7 @@ class Player implements UserInterface
         $this->ratio += 32 * ($result - $this->probabilityAgainst($player));
     }
 
-    public function getRatio(): float
+    public function getRatio(): ?float
     {
         return $this->ratio;
     }

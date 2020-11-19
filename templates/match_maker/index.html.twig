@@ -9,8 +9,8 @@
         <thead>
             <tr>
                 <th>Id</th>
-                <th>Player1</th>
-                <th>Player2</th>
+                <th>Player A</th>
+                <th>Player B</th>
                 <th>Winner</th>
                 <th>ScorePlayer1</th>
                 <th>ScorePlayer2</th>
@@ -23,11 +23,11 @@
         {% for match_maker in match_makers %}
             <tr>
                 <td>{{ match_maker.id }}</td>
-                <td>{{ match_maker.player1 }}</td>
-                <td>{{ match_maker.player2 }}</td>
+                <td>{{ match_maker.playerA.username }}</td>
+                <td>{{ match_maker.playerB.username }}</td>
                 <td>{{ match_maker.winner }}</td>
-                <td>{{ match_maker.scorePlayer1 }}</td>
-                <td>{{ match_maker.scorePlayer2 }}</td>
+                <td>{{ match_maker.scorePlayerA }}</td>
+                <td>{{ match_maker.scorePlayerB }}</td>
                 <td>{{ match_maker.status }}</td>
                 <td>{{ match_maker.encounterDate ? match_maker.encounterDate|date('Y-m-d') : '' }}</td>
                 <td>

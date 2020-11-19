@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\MatchMaker;
+use App\Entity\Player;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,14 +16,18 @@ class HomeController extends AbstractController
      */
     public function index(): Response
     {
-        $match = new MatchMaker();
-        $match->setPlayer1("Mickael")
-            ->setPlayer2("JeanMi")
-            ->setStatus(MatchMaker::STATUS_PLAYING);
+        $playerA = new Player();
+        $playerA->setUsername('Greg');
+
+        $playerB = new Player();
+        $playerB->setUsername('Bobby');
+
+        $match = new MatchMaker($playerA, $playerB);
+        $match->setStatus(MatchMaker::STATUS_PLAYING);
 
         return $this->render('home/index.html.twig', [
             'controller_name' => 'HomeController',
-            'match' => dump($match)
+            'match' => $match
         ]);
     }
 

@@ -3,7 +3,10 @@
 namespace App\Form;
 
 use App\Entity\MatchMaker;
+use App\Entity\Player;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -12,13 +15,9 @@ class MatchMakerType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('player1')
-            ->add('player2')
-            ->add('winner')
-            ->add('scorePlayer1')
-            ->add('scorePlayer2')
-            ->add('status')
-            ->add('encounterDate')
+            ->add('playerA', EntityType::class, ['class' => Player::class, 'choice_label' => 'username'])
+            ->add('playerB', EntityType::class, ['class' => Player::class, 'choice_label' => 'username'])
+            ->add('encounterDate', DateType::class)
         ;
     }
 
