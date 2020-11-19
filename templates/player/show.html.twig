@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Player{% endblock %}
+
+{% block body %}
+    <h1>Player</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ player.id }}</td>
+            </tr>
+            <tr>
+                <th>Username</th>
+                <td>{{ player.username }}</td>
+            </tr>
+            <tr>
+                <th>Roles</th>
+                <td>{{ player.roles ? player.roles|json_encode : '' }}</td>
+            </tr>
+            <tr>
+                <th>Password</th>
+                <td>{{ player.password }}</td>
+            </tr>
+            <tr>
+                <th>Ratio</th>
+                <td>{{ player.ratio }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('player_index') }}">back to list</a>
+
+    <a href="{{ path('player_edit', {'id': player.id}) }}">edit</a>
+
+    {{ include('player/_delete_form.html.twig') }}
+{% endblock %}
