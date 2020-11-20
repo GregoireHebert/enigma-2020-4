@@ -56,7 +56,7 @@ class MatchMaker
      */
     public ?float $scorePlayerB = null;
 
-    public function __construct (?PlayerInterface $playerA = null, ?PlayerInterface $playerB = null)
+    public function __construct(?PlayerInterface $playerA = null, ?PlayerInterface $playerB = null)
     {
         $this->playerA = $playerA;
         $this->playerB = $playerB;

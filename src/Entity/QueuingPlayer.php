@@ -24,7 +24,7 @@ class QueuingPlayer implements InLobbyPlayerInterface
      */
     private int $range = 1;
 
-    public function __construct (PlayerInterface $player)
+    public function __construct(PlayerInterface $player)
     {
         $this->player = $player;
     }
@@ -34,7 +34,7 @@ class QueuingPlayer implements InLobbyPlayerInterface
         return $this->player;
     }
 
-    public function updateRatioAgainst (PlayerInterface $player, $result): void
+    public function updateRatioAgainst(PlayerInterface $player, $result): void
     {
         $this->player->updateRatioAgainst($player, $result);
     }

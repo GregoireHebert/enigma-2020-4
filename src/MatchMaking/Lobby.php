@@ -31,7 +31,7 @@ class Lobby
         $this->playerRepository = $playerRepository;
 
         $this->queuingPlayers = $queuingPlayerRepository->findAll();
-        usort($this->queuingPlayers, static function(PlayerInterface $p1, PlayerInterface $p2) {
+        usort($this->queuingPlayers, static function (PlayerInterface $p1, PlayerInterface $p2) {
             return $p1->getRatio() <=> $p2->getRatio();
         });
         $this->queuingPlayerRepository = $queuingPlayerRepository;
@@ -42,7 +42,7 @@ class Lobby
         $minLevel = round($player->getRatio()/100);
         $maxLevel = $minLevel+$player->getRange();
 
-        $oponents = array_filter($this->queuingPlayers, static function(InLobbyPlayerInterface $potentialOponent) use ($minLevel, $maxLevel, $player) {
+        $oponents = array_filter($this->queuingPlayers, static function (InLobbyPlayerInterface $potentialOponent) use ($minLevel, $maxLevel, $player) {
             $playerLevel = round($potentialOponent->getRatio()/100);
 
             return $player !== $potentialOponent && ($minLevel <= $playerLevel) && ($playerLevel <= $maxLevel);
@@ -54,8 +54,7 @@ class Lobby
     public function playerIsInLobby(PlayerInterface $player)
     {
         /** @var QueuingPlayer $queuingPlayer */
-        foreach ($this->queuingPlayers as $queuingPlayer)
-        {
+        foreach ($this->queuingPlayers as $queuingPlayer) {
             if ($queuingPlayer === $player || $queuingPlayer->getPlayer() === $player) {
                 return $queuingPlayer;
             }
@@ -67,8 +66,7 @@ class Lobby
     public function playerIsInMatch(PlayerInterface $player)
     {
         /** @var MatchMaker $match */
-        foreach ($this->matches as $match)
-        {
+        foreach ($this->matches as $match) {
             if ($match->getStatus() !== MatchMaker::STATUS_OVER && ($match->getPlayerA() === $player || $match->getPlayerB() === $player)) {
                 return true;
             }
@@ -79,7 +77,7 @@ class Lobby
 
     public function removePlayer(PlayerInterface $player)
     {
-        if(false === $queuingPlayer = $this->playerIsInLobby($player)) {
+        if (false === $queuingPlayer = $this->playerIsInLobby($player)) {
             throw new \Exception('You cannot remove a player that is not in the lobby.');
         }
 

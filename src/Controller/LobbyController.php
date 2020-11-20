@@ -59,18 +59,7 @@ class LobbyController extends AbstractController
             ]);
         }
 
-        // filtrer par l'utilisateur connecté
-        $qb = $matchMakerRepository->createQueryBuilder('m');
-
-        // le status en attente
-        $qb->where('m.status = :status')
-            ->setParameter('status', MatchMaker::STATUS_PENDING)
-            ->andWhere('m.playerA = :me OR m.playerB = :me')
-            ->setParameter('me', $me);
-
-        $matches = $qb->getQuery()->getResult();
-
-        if (!empty($matches)) {
+        if (!empty($matches = $matchMakerRepository->getPlayerMatchesPending($me))) {
             $this->redirectToRoute('match_maker_index');
         }
 
@@ -102,10 +91,10 @@ class LobbyController extends AbstractController
     public function createMatches(Lobby $lobby, LoggerInterface $logger): Response
     {
         echo 'finding opponents to match.';
-            try {
-                $lobby->createMatches();
-            } catch (\Exception $e) {
-                $logger->warning('Attempt to remove a non queued player.');
-            }
+        try {
+            $lobby->createMatches();
+        } catch (\Exception $e) {
+            $logger->warning('Attempt to remove a non queued player.');
+        }
     }
 }

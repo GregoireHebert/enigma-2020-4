@@ -6,6 +6,6 @@ namespace App\Model;
 
 interface PlayerInterface
 {
-    public function updateRatioAgainst (PlayerInterface $player, $result): void;
+    public function updateRatioAgainst(PlayerInterface $player, $result): void;
     public function getRatio(): ?float;
 }
