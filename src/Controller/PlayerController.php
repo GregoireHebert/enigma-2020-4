@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 /**
  * @Route("/player")
@@ -17,6 +18,7 @@ class PlayerController extends AbstractController
 {
     /**
      * @Route("/", name="player_index", methods={"GET"})
+     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function index(): Response
     {
@@ -30,21 +32,8 @@ class PlayerController extends AbstractController
     }
 
     /**
-     * @Route("/topdix", name="player_top10", methods={"GET"})
-     */
-    public function topDix(): Response
-    {
-        $players = $this->getDoctrine()
-            ->getRepository(Player::class)
-            ->findAll();
-
-        return $this->render('player/index.html.twig', [
-            'players' => $players,
-        ]);
-    }
-
-    /**
      * @Route("/new", name="player_new", methods={"GET","POST"})
+     * @Security("is_granted('IS_ANONYMOUS')")
      */
     public function new(Request $request, UserPasswordEncoderInterface $encoder): Response
     {
@@ -69,6 +58,7 @@ class PlayerController extends AbstractController
 
     /**
      * @Route("/{id}", name="player_show", methods={"GET"})
+     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function show(Player $player): Response
     {
@@ -79,6 +69,7 @@ class PlayerController extends AbstractController
 
     /**
      * @Route("/{id}/edit", name="player_edit", methods={"GET","POST"})
+     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function edit(Request $request, Player $player): Response
     {
@@ -99,6 +90,7 @@ class PlayerController extends AbstractController
 
     /**
      * @Route("/{id}", name="player_delete", methods={"DELETE"})
+     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function delete(Request $request, Player $player): Response
     {

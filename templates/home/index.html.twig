@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello HomeController!{% endblock %}
+{% block title %}Match Maker !{% endblock %}
 
 {% block body %}
 <style>
@@ -9,9 +9,25 @@
 </style>
 
 <div class="example-wrapper">
-    <h1>MATCH ({{ match.status }})</h1>
-    <h2>Players :</h2>
-    <b>{{ match.playerA.username }}</b><br/>
-    <b>{{ match.playerB.username }}</b>
+    {% if app.user %}
+        <h1>Bonjour {{ app.user.username }}</h1>
+            <p>Votre Niveau : {{ app.user.ratio }}</p>
+            <h2>Top 10</h2>
+            <ul style="width:33%;">
+            {% for player in top10 %}
+                <li{% if app.user == player %} style="background-color: #1f69c0;color:white;"{% endif %}><span style="width:90px;">{{ player.ratio|round }} : </span>{{ player.username }}</li>
+            {% endfor %}
+            </ul>
+        {% if is_granted('ROLE_ADMIN') %}
+            <a href="{{ path('lobby') }}">Rejoindre le lobby</a>
+            <a href="{{ path('lobbyPending') }}">Visualiser le lobby</a>
+        {% else %}
+            <a href="{{ path('lobby') }}">Rejoindre le lobby</a>
+            <a href="{{ path('match_maker_index') }}">Consulter mes matchs</a>
+        {% endif %}
+    {% else %}
+        <a href="{{ path('app_login') }}">Me connecter</a>
+        <a href="{{ path('player_new') }}">Créer un compte</a>
+    {% endif %}
 </div>
 {% endblock %}

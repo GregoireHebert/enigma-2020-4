@@ -1,47 +1,92 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}MatchMaker index{% endblock %}
+{% block title %}Match{% endblock %}
 
 {% block body %}
-    <h1>MatchMaker index</h1>
-
+    <h1>Mes Matchs</h1>
+    <h2>Joueurs en attente ({{ queue }})</h2>
     <table class="table">
         <thead>
             <tr>
                 <th>Id</th>
                 <th>Player A</th>
                 <th>Player B</th>
-                <th>Winner</th>
-                <th>ScorePlayer1</th>
-                <th>ScorePlayer2</th>
+                <th>Gagnant</th>
                 <th>Status</th>
-                <th>EncounterDate</th>
                 <th>actions</th>
             </tr>
         </thead>
         <tbody>
-        {% for match_maker in match_makers %}
-            <tr>
-                <td>{{ match_maker.id }}</td>
-                <td>{{ match_maker.playerA.username }}</td>
-                <td>{{ match_maker.playerB.username }}</td>
-                <td>{{ match_maker.winner }}</td>
-                <td>{{ match_maker.scorePlayerA }}</td>
-                <td>{{ match_maker.scorePlayerB }}</td>
-                <td>{{ match_maker.status }}</td>
-                <td>{{ match_maker.encounterDate ? match_maker.encounterDate|date('Y-m-d') : '' }}</td>
+        {% for match_pending in matches_pending %}
+            <tr style="background-color: #43A8FF;color:white;font-weight: bold;">
+                <td>{{ match_pending.id }}</td>
+                <td>{{ match_pending.playerA.username }}</td>
+                <td>{{ match_pending.playerB.username }}</td>
+                <td>{{ match_pending.winner ? match_pending.winner.username : 'N/A' }}</td>
+                <td>{{ match_pending.status }}</td>
                 <td>
-                    <a href="{{ path('match_maker_show', {'id': match_maker.id}) }}">show</a>
-                    <a href="{{ path('match_maker_edit', {'id': match_maker.id}) }}">edit</a>
+                    {% if is_granted('ROLE_ADMIN') %}
+                    <a href="{{ path('match_maker_show', {'id': match_pending.id}) }}">show</a>
+                    <a href="{{ path('match_maker_edit', {'id': match_pending.id}) }}">edit</a>
+                    {% endif %}
                 </td>
             </tr>
         {% else %}
             <tr>
-                <td colspan="9">no records found</td>
+                <td colspan="9">Aucun match en attente...</td>
+            </tr>
+        {% endfor %}
+        {% for match_playing in matches_playing %}
+            <tr style="background-color: #1C92A9;color:white;font-weight: bold;">
+                <td>{{ match_playing.id }}</td>
+                <td>{{ match_playing.playerA.username }}</td>
+                <td>{{ match_playing.playerB.username }}</td>
+                <td>{{ match_playing.winner ? match_playing.winner.username : 'N/A' }}</td>
+                <td>{{ match_playing.status }}</td>
+                <td>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <a href="{{ path('match_maker_show', {'id': match_playing.id}) }}">show</a>
+                        <a href="{{ path('match_maker_edit', {'id': match_playing.id}) }}">edit</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="9">Aucun match en cours...</td>
+            </tr>
+        {% endfor %}
+        {% for match_over in matches_over %}
+            <tr style="color:grey;font-weight: bold;">
+                <td>{{ match_over.id }}</td>
+                <td>{{ match_over.playerA.username }}</td>
+                <td>{{ match_over.playerB.username }}</td>
+                <td>{{ match_over.winner ? match_over.winner.username : 'N/A' }}</td>
+                <td>{{ match_over.status }}</td>
+                <td>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <a href="{{ path('match_maker_show', {'id': match_over.id}) }}">show</a>
+                        <a href="{{ path('match_maker_edit', {'id': match_over.id}) }}">edit</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="9">Aucun match terminé...</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
 
-    <a href="{{ path('match_maker_new') }}">Create new</a>
+    {% if is_granted('ROLE_ADMIN') %}
+        <a href="{{ path('lobby') }}">Rejoindre le lobby</a>
+        <a href="{{ path('lobbyPending') }}">Visualiser le lobby</a>
+    {% else %}
+        <a href="{{ path('lobby') }}">Rejoindre le lobby</a>
+    {% endif %}
+
+    <script type="application/javascript">
+        setTimeout(function()   {
+            window.location.reload();
+        }, 3000);
+    </script>
 {% endblock %}

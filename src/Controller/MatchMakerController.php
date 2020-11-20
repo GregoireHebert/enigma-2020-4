@@ -3,10 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\MatchMaker;
+use App\Entity\Player;
 use App\Form\MatchMakerType;
 use App\MatchMaking\Lobby;
 use App\Repository\MatchMakerRepository;
-use App\Repository\PlayerRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,52 +23,22 @@ class MatchMakerController extends AbstractController
      * @Route("/", name="match_maker_index", methods={"GET"})
      * @AccessControl("is_granted('ROLE_USER')")
      */
-    public function index(MatchMakerRepository $matchMakerRepository, Security $security, PlayerRepository $playerRepository): Response
+    public function index(MatchMakerRepository $matchMakerRepository, Security $security, Lobby $lobby): Response
     {
+        /** @var Player $me */
         $me = $security->getUser();
 
-        // filtrer par l'utilisateur connecté
-        $qb = $matchMakerRepository->createQueryBuilder('m');
-
-        // le status en attente
-        $qb->where('m.status = :status')
-            ->setParameter('status', MatchMaker::STATUS_PENDING);
-
-        if (!$security->isGranted('ROLE_ADMIN', $me)) {
-            // si je suis l'un des deux joueurs
-            $qb->andWhere('m.playerA = :me OR m.playerB = :me')
-            ->setParameter('me', $me);
-        }
-
-        $matches = $qb->getQuery()->getResult();
-
-        if (empty($matches) && !$security->isGranted('ROLE_ADMIN', $me)) {
-            $players = $playerRepository->findAll();
-            foreach ($players as $player) {
-                if ($security->isGranted('ROLE_ADMIN', $player) || $me === $player) {
-                    $player = null;
-                    continue;
-                }
-
-                if ($me->getRatio() === $player->getRatio() || $me->getRatio() >= $player->getRatio() - 100 || $me->getRatio() <= $player->getRatio() + 100) {
-                    break;
-                }
-            }
-
-            $match = new MatchMaker($me, $player);
-
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($match);
-            $entityManager->flush();
-        }
-
         return $this->render('match_maker/index.html.twig', [
-            'match_makers' => $matches,
+            'matches_pending' => $matchMakerRepository->getPlayerMatchesPending($me),
+            'matches_playing' => $matchMakerRepository->getPlayerMatchesPlaying($me),
+            'matches_over' => $matchMakerRepository->getPlayerMatchesOver($me),
+            'queue' => count($lobby->queuingPlayers)
         ]);
     }
 
     /**
      * @Route("/new", name="match_maker_new", methods={"GET","POST"})
+     * @AccessControl("is_granted('ROLE_ADMIN')")
      */
     public function new(Request $request): Response
     {
@@ -92,6 +62,7 @@ class MatchMakerController extends AbstractController
 
     /**
      * @Route("/{id}", name="match_maker_show", methods={"GET"})
+     * @AccessControl("is_granted('ROLE_ADMIN')")
      */
     public function show(MatchMaker $matchMaker): Response
     {
@@ -125,6 +96,7 @@ class MatchMakerController extends AbstractController
 
     /**
      * @Route("/{id}", name="match_maker_delete", methods={"DELETE"})
+     * @AccessControl("is_granted('ROLE_ADMIN')")
      */
     public function delete(Request $request, MatchMaker $matchMaker): Response
     {
