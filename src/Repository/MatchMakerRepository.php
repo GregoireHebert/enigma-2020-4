@@ -14,4 +14,10 @@ class MatchMakerRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, MatchMaker::class);
     }
+
+    public function save(MatchMaker $match)
+    {
+        $this->_em->persist($match);
+        $this->_em->flush();
+    }
 }
