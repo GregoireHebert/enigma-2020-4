@@ -4,12 +4,14 @@ namespace App\Controller;
 
 use App\Entity\Player;
 use App\Form\PlayerType;
+use App\Security\UserAuthenticator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 
 /**
  * @Route("/player")
@@ -35,7 +37,7 @@ class PlayerController extends AbstractController
      * @Route("/new", name="player_new", methods={"GET","POST"})
      * @Security("is_granted('IS_ANONYMOUS')")
      */
-    public function new(Request $request, UserPasswordEncoderInterface $encoder): Response
+    public function new(Request $request, UserPasswordEncoderInterface $encoder, GuardAuthenticatorHandler $guardHandler, UserAuthenticator $formAuthenticator): Response
     {
         $player = new Player();
         $form = $this->createForm(PlayerType::class, $player);
@@ -47,7 +49,12 @@ class PlayerController extends AbstractController
             $entityManager->persist($player);
             $entityManager->flush();
 
-            return $this->redirectToRoute('player_index');
+            return $guardHandler->authenticateUserAndHandleSuccess(
+                $player,
+                $request,
+                $formAuthenticator,
+                'main'
+            );
         }
 
         return $this->render('player/new.html.twig', [

@@ -3,12 +3,9 @@
 {% block title %}Lobby !{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
 
-<div class="example-wrapper">
+<main class="mt-5 px-4 sm:mt-6 sm:px-6 md:mt-8 lg:mt-10 lg:px-8 xl:mt-14 z-50">
+    <div class="flex flex-col">
     {% if is_granted('ROLE_ADMIN') %}
         <h1>Joueurs enregistré ({{ queuingPlayers|length }})</h1>
         <ul>
@@ -17,11 +14,20 @@
         {% endfor %}
         </ul>
     {% else %}
-    <p>En attente de Match...</p>
+        <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl items-center justify-center w-full flex">
+            En attente de Match...
+        </h2>
+        <p class="text-gray-500">recherche de joueur en cours...</p>
+        <p>l'algorithme essai de vous appairer avec un joueur du même niveau. à chaque tentative, si aucun joueur n'est trouvé, il augmentera la portée de la recherche aux niveaux supérieurs et inférieurs. Il itèrera jusqu'à vous trouver un adversaire.</p>
     {% endif %}
 
-    <a href="{{ path('lobbyExit') }}">Quitter le lobby</a>
-</div>
+    <div class="rounded-md shadow mt-5">
+        <a href="{{ path('lobbyExit') }}" class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 md:py-4 md:text-lg md:px-10">
+            Quitter le lobby
+        </a>
+    </div>
+    </div>
+</main>
     <script type="application/javascript">
         setTimeout(function()   {
             window.location.reload();
